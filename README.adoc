@@ -1,0 +1,46 @@
+= libasciidoc-diagram
+
+This is a very simple https://github.com/bytesparadis/libasciidoc[libasciidoc plugin] that allows you to add diagrams to your AsciiDoc document in the same vein as https://docs.asciidoctor.org/diagram-extension/latest/[asciidoctor-diagram].
+It takes `DelimitedBlock`s and replaces them with `ImageBlock`s if their first positional attribute matches one of the known diagram types.
+
+== Limitations/Considerations
+
+* Only https://plantuml.com/[plantuml] diagrams are supported
+* Java, graphviz, and plantuml need to be installed locally with `plantuml.jar` in `/usr/share/plantuml/plantuml.jar`
+* This has only been tested on Linux
+* The `make.sh` script assumes the libasciidoc git repo used to compile libasciidoc is located at `../libasciidoc`.
+* All images are generated in the working directory
+
+== Compiling
+
+This plugin can be compiled using the `make.sh` shell script.
+
+== Usage
+
+To make a diagram, create a delimited block with the first positional attribute being `plantuml`, an optional target attribute with the name of the generated file, and an optional format attribute with a lowercase supported plantuml format (svg, png):
+
+[source, asciidoc]
+----
+= Example Document
+
+== There is a diagram in this section
+
+[plantuml, target=example.svg, format=svg] 
+....
+@startuml
+actor Actor
+cloud Cloud
+database DB
+
+Actor <-> Cloud
+Cloud <-> DB
+@enduml
+....
+----
+
+This can be rendered to HTML using libasciidoc with the plugin directive:
+
+[source, console]
+----
+$ libasciidoc -p libasciidoc-diagram.so example.adoc 
+----
